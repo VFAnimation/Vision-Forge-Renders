@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Screen Image with Watermark</title>
+    <style>
+        /* Basic body styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        /* Style for the button */
+        #openImageBtn {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #openImageBtn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Full-screen Image Container */
+        #imageContainer {
+            display: none;
+            position: relative;
+            max-width: 100%;
+            max-height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #fullscreenImage {
+            width: 100%;
+            height: auto;
+            max-height: 90vh; /* Limit the height of the image */
+            object-fit: contain;
+        }
+
+        /* Watermark style */
+        #watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures watermark covers the entire image */
+            opacity: 0.5; /* Watermark transparency */
+            pointer-events: none; /* Ensure it's not clickable */
+        }
+
+        /* Responsive Design: Ensure the button is centered and responsive */
+        @media (max-width: 768px) {
+            #openImageBtn {
+                font-size: 16px;
+                padding: 12px 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #openImageBtn {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Button to open the image in full-screen -->
+    <button id="openImageBtn">Open Image</button>
+
+    <!-- Full-screen Image Container -->
+    <div id="imageContainer">
+        <img src="protected-image.png" id="fullscreenImage" alt="Full-Screen Image">
+        <img src="watermark.png" id="watermark" alt="Watermark">
+    </div>
+
+    <script>
+        const openImageBtn = document.getElementById("openImageBtn");
+        const imageContainer = document.getElementById("imageContainer");
+        const fullscreenImage = document.getElementById("fullscreenImage");
+        const watermark = document.getElementById("watermark");
+
+        // Function to make an element go full-screen
+        function openFullScreen() {
+            // Show the image container
+            imageContainer.style.display = "flex";
+            // Enter full-screen mode
+            if (fullscreenImage.requestFullscreen) {
+                fullscreenImage.requestFullscreen();
+            } else if (fullscreenImage.mozRequestFullScreen) { // Firefox
+                fullscreenImage.mozRequestFullScreen();
+            } else if (fullscreenImage.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                fullscreenImage.webkitRequestFullscreen();
+            } else if (fullscreenImage.msRequestFullscreen) { // IE/Edge
+                fullscreenImage.msRequestFullscreen();
+            }
+
+            // Disable right-click in full-screen mode
+            document.addEventListener("contextmenu", disableRightClick, false);
+        }
+
+        // Disable right-click context menu
+        function disableRightClick(event) {
+            event.preventDefault(); // Prevent the context menu from opening
+        }
+
+        // Open the image in full-screen when the button is clicked
+        openImageBtn.addEventListener("click", openFullScreen);
+
+        // Close full-screen when any key is pressed, including Escape
+        document.addEventListener("keydown", (event) => {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { // Firefox
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge
+                document.msExitFullscreen();
+            }
+
+            // Remove the event listener when exiting full-screen
+            document.removeEventListener("contextmenu", disableRightClick, false);
+
+            // Show watermark after exiting full-screen
+            imageContainer.style.display = "flex";
+        });
+
+        // Disable right-click on the first page
+        document.addEventListener("contextmenu", disableRightClick, false);
+    </script>
+
+</body>
+</html>
